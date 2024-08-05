@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953b7b8c81443b44fb00a123f290a19d, type: 3}
+  m_Name: WhiteSet
+  m_EditorClassIdentifier: 
+  pieces:
+  - {fileID: 11400000, guid: ca096829b442efa4fbb2de6fa5bdd909, type: 2}
+  - {fileID: 11400000, guid: 97de88ee40b41394eb3d89bbb8f6632a, type: 2}
+  - {fileID: 11400000, guid: 5e3422bc2fa75aa44916f8ca3900038d, type: 2}
+  - {fileID: 11400000, guid: dfd0b112e60915d499213a9c0242ee8f, type: 2}
+  - {fileID: 11400000, guid: 290f87f21add138429809e1e3baa5172, type: 2}
+  - {fileID: 11400000, guid: 9e64141955e8451438bf593b49a8b7bf, type: 2}
+  color: 0
