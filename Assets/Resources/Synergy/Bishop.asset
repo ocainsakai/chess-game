@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2100f87ba2c3e514eb70fd42ba8b43dd, type: 3}
+  m_Name: Bishop
+  m_EditorClassIdentifier: 
+  synergyName: 
+  unitsInSynergy:
+  - {fileID: 11400000, guid: 33cb8286c5b758f4abc22a1b4ab07c94, type: 2}
+  - {fileID: 11400000, guid: f06718e4b190fe94fb4c48f870271421, type: 2}
+  activationThresholds: 
+  effects: []

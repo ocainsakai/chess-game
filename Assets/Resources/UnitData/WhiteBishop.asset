@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8f3842cfb8f1e4d84883cb5076542f, type: 3}
+  m_Name: WhiteBishop
+  m_EditorClassIdentifier: 
+  isWhite: 1
+  pieceType: 3
+  sprite: {fileID: 7560534232159598683, guid: bbb8f45181d55f54f88666e95750a865, type: 3}
