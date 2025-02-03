@@ -15,9 +15,10 @@ public class SingletonPattern<T> : MonoBehaviour where T : SingletonPattern<T>
 
     private void CheckInstance()
     {
-        if (_instance == null)
+        if (_instance != null)
         {
-            _instance = this as T;
+            Debug.LogWarning("only have " + typeof(T));
         }
+            _instance = this as T;
     }
 }

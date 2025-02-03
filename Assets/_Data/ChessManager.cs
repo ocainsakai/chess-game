@@ -1,21 +1,59 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChessManager : SingletonPattern<ChessManager>
 {
-    public ChessTypeListSO chessSet => Resources.Load<ChessTypeListSO>("ListSO/" + nameof(ChessTypeListSO));
-    private Transform chessPiecePrefab => Resources.Load<Transform>("Prefabs/ChessPiece");
+    [SerializeField] private List<Transform> chessPieces;
+    [SerializeField] private Dictionary<int, Transform> chessMap;
+    protected override void Awake()
+    {
+        base.Awake();
 
-    private void Start()
-    {
-        InitPawn();
+        CreateChessMap();
     }
-    private void InitPawn()
+    private void CreateChessMap()
     {
-        for (int i = 0; i < 8; i++)
+        if (chessPieces == null) return;
+        chessMap = new Dictionary<int, Transform>();
+        foreach (Transform t in chessPieces)
         {
-            ChessPiece newBlack = Instantiate(chessPiecePrefab).GetComponent<ChessPiece>();
-            newBlack.SetPosition(new Vector2Int(6, i)); 
+            string chess = t.name.ToLower();
+            int pieceID = 0;
+            if (chess.Contains("black")) 
+            {
+                pieceID = pieceID | Piece.Black;
+            }
+            else if (chess.Contains("white"))
+            {
+                pieceID = pieceID | Piece.White;
+            }
+
+            if (chess.Contains("king"))
+            {
+                pieceID = pieceID | Piece.King;
+            }
+            else if (chess.Contains("queen")){
+                pieceID = pieceID | Piece.Queen;
+            }
+            else if (chess.Contains("knight")){
+                pieceID = pieceID | Piece.Knight;
+            }   
+            else if (chess.Contains("bishop")){
+                pieceID = pieceID | Piece.Bishop;
+            }
+            else if (chess.Contains("rook")){
+                pieceID = pieceID | Piece.Rook;
+            }
+            else if (chess.Contains("pawn")){
+                pieceID = pieceID | Piece.Pawn;
+            }
+            //Debug.Log(pieceID);
+            chessMap.Add(pieceID, t);
         }
     }
-    
+
+    public Transform GetChess(int pieceID)
+    {
+        return chessMap[pieceID];
+    }
 }

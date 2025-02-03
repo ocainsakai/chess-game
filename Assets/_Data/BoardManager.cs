@@ -4,25 +4,47 @@ using UnityEngine.UI;
 
 public class BoardManager : SingletonPattern<BoardManager>
 {
-    [SerializeField] private Dictionary< Vector2Int, RectTransform> cells;
+    [SerializeField] private float cellWidth = 5f;
+    //[SerializeField] private GameObject prefabs;
+
+    [SerializeField] private Dictionary<int, Vector3> board;
+    [SerializeField] private Dictionary<int, int> chessPositions;
+    public int[] Square ;
     protected override void Awake()
     {
         base.Awake();
-        cells = new Dictionary<Vector2Int, RectTransform>();
-        for (int i = 0; i < 8; i++)
+        GenerateSquares();
+    }
+    private void Start()
+    {
+        InitGame();
+
+    }
+    private void InitGame()
+    {
+        chessPositions = UltilitiesFEN.LoadPosiotionFromFEN(UltilitiesFEN.startFEN);
+        //Debug.Log(chessPositions.Count);
+        foreach (var item in chessPositions)
         {
-            for (int j = 0; j < 8; j++)
+            //Debug.Log(item);
+            int pos = item.Key;
+            Transform piece = ChessManager.Instance.GetChess(item.Value);
+            //Debug.Log(piece);
+            Transform chess = Instantiate(piece, board[pos], this.transform.rotation);
+
+        }
+    }
+    private void GenerateSquares()
+    {
+        board = new Dictionary<int, Vector3>();
+        board.Clear();
+        for (int file = 0; file < 8; file++)
+        {
+            for (int rank = 0; rank < 8; rank++)
             {
-                Transform child = this.transform.GetChild(i + j*8);
-                Color color = (i+j)%2 == 0 ? Color.black : Color.white;
-                child.GetComponent<Image>().color = color;  
-                cells.Add( new Vector2Int(i, j),(RectTransform) child); 
+                board.Add(rank * 8 + file, new Vector3((file - 3.5f) * cellWidth, 0, (rank - 3.5f) * cellWidth));
             }
         }
     }
 
-    public RectTransform GetCell(Vector2Int position)
-    {
-        return cells.TryGetValue(position, out var cell) ? cell : null;
-    }
 }

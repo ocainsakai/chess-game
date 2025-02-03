@@ -1,26 +1,10 @@
-using UnityEngine;
 
-public class Board : MonoBehaviour
+public static class Board
 {
-    [SerializeField] protected Transform cellTemplate;
-    [SerializeField] protected Transform board;
-
-    protected virtual void Reset()
+    public static int[] Square;
+    public static int ColourToMove;
+    static Board()
     {
-        cellTemplate = transform.Find("CellTemplate");
-        board = transform.Find("Board");
-    }
-    protected virtual void Start()
-    {
-        GenerateBoard();
-    }
-    protected virtual void GenerateBoard()
-    {
-        for (int i = 0; i < 64; i++)
-        {
-            Transform cell = Instantiate(cellTemplate, transform.position, Quaternion.identity);
-            cell.gameObject.SetActive(true);
-            cell.SetParent(board);
-        }
+        Square = new int[64];
     }
 }
