@@ -28,15 +28,23 @@ public class BoardUI : MonoBehaviour
                 Transform newCell = Instantiate(cellPrefab, position, Quaternion.identity);
                 newCell.gameObject.SetActive(true);
                 newCell.SetParent(this.transform);
-                newCell.GetComponent<SpriteRenderer>().color = (file+rank)%2==0 ? darkColor : lightColor;
+                newCell.GetComponent<SpriteRenderer>().color = (file+rank) % 2 == 0 ? darkColor : lightColor;
                 newCell.name = (rank * 8 + file).ToString();
                 square[rank * 8 + file] = newCell;
             }
         }
     }
-    public void SetColor(int index)
+    public void HightLight(int square)
     {
-        square[index].GetComponent<SpriteRenderer>().color = Color.red;
+        SpriteRenderer renderer = this.square[square].GetComponent<SpriteRenderer>();
+        renderer.color = IsDarkCell(square) ? Color.red : Color.red * 0.85f;
+
+    }
+    public bool IsDarkCell(int square)
+    {
+        int file = (int) square / 8;
+        int rank = (int) square % 8;
+        return (file + rank) % 2 == 0;
     }
     public Transform GetCell(int index)
     {

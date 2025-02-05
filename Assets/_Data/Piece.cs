@@ -19,7 +19,11 @@ public static class Piece
     {
         return (piece & 7) == type;
     }
-
+    public static bool IsInitPawn(int square, int piece)
+    {
+        return (square >= 8 && square < 16 && IsColour(piece, White))
+            || (square >= 48 && square < 56 && IsColour(piece, Black));
+    }
     public static bool IsColour(int piece, int colour)
     {
         return (piece & (White | Black)) == colour;

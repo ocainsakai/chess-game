@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-//using static PieceMovement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] PieceUI pieceUI;
     Dictionary<int,Transform> pieces;
     public static GameManager instance;
+    PieceMovement pieceMovement = new PieceMovement();
+
     private void Awake()
     {
         if (instance != null)
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
             newPiece.gameObject.SetActive(true);
             pieces.Add(i, newPiece);
         }
-
+        pieceMovement.GenerateMove();
     }
     public void Move(int startSquare, int targetSquare)
     {
@@ -52,13 +53,19 @@ public class GameManager : MonoBehaviour
         }
         pieces.Remove(startSquare);
         pieces.Add(targetSquare, start);
-        
+        pieceMovement.GenerateMove();
     }
-    public void UpdateChess()
+    public int[] PredictionMove(int startSquare)
     {
-        foreach (var item in pieces)
+        List<int> moves = new List<int>();
+        foreach (var move in pieceMovement.moves)
         {
-            
+            if (move.startSquare == startSquare)
+            {
+                BoardUI.instance.HightLight(move.targetSquare);
+                moves.Add(move.targetSquare);
+            }
         }
+        return moves.ToArray();
     }
 }

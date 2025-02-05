@@ -19,6 +19,7 @@ public class DragPiece : MonoBehaviour
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             this.transform.position = new Vector3(mousePos.x, mousePos.y, 0);
+            GameManager.instance.PredictionMove(startSquare);
         }
     }
     private void OnMouseUp() {

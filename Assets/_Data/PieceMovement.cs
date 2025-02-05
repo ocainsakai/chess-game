@@ -44,13 +44,30 @@ public class PieceMovement
             {
                 if (Piece.IsSlidingPiece(piece))
                 {
-                    GenerateSlidingMove(startSquare, piece);
+
+                } else if (Piece.IsType(piece, Piece.Knight))
+                {
+
+                } else if (Piece.IsType(piece, Piece.Pawn))
+                {
+                    GeneratePawnMove(startSquare, piece);
                 }
             }
         }
         return moves;
     }
-
+    private void GeneratePawnMove(int startSquare, int piece)
+    {
+        int dirIndex = Piece.IsColour(piece, Piece.White) ? 0 : 1;
+        int targetSquare = startSquare + DirectionOffset[dirIndex];
+        moves.Add(new Move(startSquare, targetSquare));
+        bool isInit = Piece.IsInitPawn(startSquare, piece);
+        if (isInit)
+        {
+            targetSquare += DirectionOffset[dirIndex];
+            moves.Add(new Move(startSquare, targetSquare));
+        }
+    }
     private void GenerateSlidingMove(int startSquare, int piece)
     {
         int startDirIndex = Piece.IsType(piece, Piece.Bishop) ? 4 : 0;
