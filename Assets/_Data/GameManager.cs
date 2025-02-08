@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] PieceUI pieceUI;
     Dictionary<int,Transform> pieces;
     public static GameManager instance;
+    private List<int> squareCanMove;
     PieceMovement pieceMovement = new PieceMovement();
 
     private void Awake()
@@ -41,19 +42,34 @@ public class GameManager : MonoBehaviour
         }
         pieceMovement.GenerateMove();
     }
-    public void Move(int startSquare, int targetSquare)
+    public void Move(int startSquare, int targetSquare, Transform chess)
     {
-        Board.Move(startSquare, targetSquare);
-        Transform start = pieces[startSquare];
-
-        if (pieces.TryGetValue(targetSquare, out Transform target))
+        BoardUI.instance.ResetColor();
+        if (!CheckValidMove(targetSquare))
         {
-            target.gameObject.SetActive(false);
-            pieces.Remove(targetSquare);
+            chess.position = BoardUI.instance.GetCell(startSquare).position;
         }
-        pieces.Remove(startSquare);
-        pieces.Add(targetSquare, start);
-        pieceMovement.GenerateMove();
+        else
+        {
+            Debug.Log(CheckValidMove(targetSquare));
+            Board.Move(startSquare, targetSquare);
+            Transform start = pieces[startSquare];
+
+            chess.position = BoardUI.instance.GetCell(targetSquare).position;
+            if (pieces.TryGetValue(targetSquare, out Transform target))
+            {
+                target.gameObject.SetActive(false);
+                pieces.Remove(targetSquare);
+            }
+            pieces.Remove(startSquare);
+            pieces.Add(targetSquare, start);
+            pieceMovement.GenerateMove();
+        }
+
+    }
+    private bool CheckValidMove(int target)
+    {
+        return squareCanMove != null && squareCanMove.Contains(target);
     }
     public int[] PredictionMove(int startSquare)
     {
@@ -66,6 +82,8 @@ public class GameManager : MonoBehaviour
                 moves.Add(move.targetSquare);
             }
         }
+        squareCanMove = moves;
+        Debug.Log(squareCanMove.Count);
         return moves.ToArray();
     }
 }

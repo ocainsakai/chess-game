@@ -1,4 +1,5 @@
-
+﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +7,12 @@ public class PieceMovement
 {
 
     public List<Move> moves { get; private set; } 
-
+    
     public static readonly int[] DirectionOffset = { 8, -8, -1, 1, 7, -7, -9, 9 };
+    public static readonly int[] DirectionKnightOffset = {15, -15, 10, -10, -6, 6, 17, -17};
     public static readonly int[][] NumSquaresToEdge = new int[64][];
+    private int friendlyColour;
+    private int opponentColour => friendlyColour ^= (Piece.White | Piece.Black);
 
     public PieceMovement()
     {
@@ -23,31 +27,39 @@ public class PieceMovement
 
                 int squareIndex = rank * 8 + file;
 
-                NumSquaresToEdge[squareIndex] = new int[] {numNorth, numSouth, numWest, numEast,
-                Mathf.Min(numNorth, numWest),
-                Mathf.Min(numSouth, numEast),
-                Mathf.Min(numNorth, numEast),
+                NumSquaresToEdge[squareIndex] = new int[] {
+                    numNorth,// 
+                    numSouth,
+                    numWest,//
+                    numEast,
+                Mathf.Min(numWest, numNorth),
+                Mathf.Min(numEast, numSouth),
                 Mathf.Min(numSouth, numWest),
-
+                Mathf.Min(numNorth, numEast),
                 };
+                //Debug.Log("square: " + squareIndex + "min " + Mathf.Min(numNorth, numEast));
             }
         }
     }
     public List<Move> GenerateMove()
     {
-        //PrecomputedMoveData();
+        friendlyColour = Board.ColourToMove;
         moves = new List<Move>();
         for (int startSquare = 0; startSquare < 64; startSquare++)
         {
             int piece = Board.Square[startSquare];
-            if (Piece.IsColour(piece, Board.ColourToMove))
+            if (Piece.IsColour(piece, friendlyColour))
             {
+                if (Piece.IsType(piece, Piece.King))
+                {
+                    GenerateKingMove(startSquare, piece);
+                }
                 if (Piece.IsSlidingPiece(piece))
                 {
-
+                    GenerateSlidingMove(startSquare, piece);
                 } else if (Piece.IsType(piece, Piece.Knight))
                 {
-
+                    GenerateKnightMove(startSquare, piece);
                 } else if (Piece.IsType(piece, Piece.Pawn))
                 {
                     GeneratePawnMove(startSquare, piece);
@@ -56,32 +68,120 @@ public class PieceMovement
         }
         return moves;
     }
-    private void GeneratePawnMove(int startSquare, int piece)
+
+    private void GenerateKingMove(int startSquare, int piece)
     {
-        int dirIndex = Piece.IsColour(piece, Piece.White) ? 0 : 1;
-        int targetSquare = startSquare + DirectionOffset[dirIndex];
-        moves.Add(new Move(startSquare, targetSquare));
-        bool isInit = Piece.IsInitPawn(startSquare, piece);
-        if (isInit)
-        {
-            targetSquare += DirectionOffset[dirIndex];
+        for (int i = 0; i < 8; i++) {
+            if (NumSquaresToEdge[startSquare][i] == 0) return;
+            int targetSquare = startSquare + DirectionOffset[i];
+            if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
             moves.Add(new Move(startSquare, targetSquare));
         }
     }
+
+    private void GenerateKnightMove(int start, int piece)
+    {
+        for (int dirIndex = 0; dirIndex < 8; dirIndex++)
+        {
+            int targetSquare = start + DirectionKnightOffset[dirIndex];
+
+            if (IsValidKnightMove(start, targetSquare))
+            {
+                if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
+                moves.Add(new Move(start, targetSquare));
+
+                
+            }
+        }        
+
+    }
+    private bool IsValidKnightMove(int start, int target)
+    {
+        if (target < 0 || target >=64) return false;
+        int startRow = start / 8;   // Hàng ban đầu (0-7)
+        int startCol = start % 8;   // Cột ban đầu (0-7)
+        int targetRow = target / 8; // Hàng đích (0-7)
+        int targetCol = target % 8; // Cột đích (0-7)
+
+        // Tính khoảng cách giữa hàng và cột
+        int rowDiff = Mathf.Abs(startRow - targetRow);
+        int colDiff = Mathf.Abs(startCol - targetCol);
+
+        // Quân Mã chỉ có thể di chuyển theo hình chữ "L": (2,1) hoặc (1,2)
+        return (rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2);
+    }
+    private void GeneratePawnMove(int startSquare, int piece)
+    {
+
+        int dirIndex = Piece.IsColour(piece, Piece.White) ? 0 : 1;
+
+        GenerateNormalMove(startSquare, dirIndex, true);
+        GeneratePawnCapture(startSquare, piece, dirIndex);
+        GeneratePawnInitMove(startSquare, piece, dirIndex);
+    }
+    private void GenerateNormalMove(int startSquare, int dirIndex, bool block)
+    {
+        int targetSquare = startSquare + DirectionOffset[dirIndex];
+        GenerateNormalMove(startSquare, dirIndex);
+    }
+    private void GenerateNormalMove(int startSquare, int dirIndex)
+    {
+        if (NumSquaresToEdge[startSquare][dirIndex] == 0) return;
+        int targetSquare = startSquare + DirectionOffset[dirIndex];
+        if (Board.Square[targetSquare] != 0) return;
+        moves.Add(new Move(startSquare, targetSquare));
+    }
+
+    private void GeneratePawnInitMove(int startSquare, int piece, int dirIndex)
+    {
+        
+        bool isInit = Piece.IsInitPawn(startSquare, piece);
+        if (isInit)
+        {
+            int targetSquare = startSquare + DirectionOffset[dirIndex]*2;
+            moves.Add(new Move(startSquare, targetSquare));
+        }
+    }
+
+    private void GeneratePawnCapture(int startSquare, int piece, int dirIndex)
+    {
+        int targetSquare = startSquare + DirectionOffset[dirIndex];
+        if (NumSquaresToEdge[startSquare][dirIndex + 6] != 0)
+        {
+            int rightChess = Board.Square[targetSquare + 1];
+            if (rightChess != 0 && NumSquaresToEdge[targetSquare][3] > 0)
+            {
+                if (Piece.Colour(piece) != Piece.Colour(rightChess))
+                    moves.Add(new Move(startSquare, targetSquare + 1));
+            }
+        }
+        if (NumSquaresToEdge[startSquare][dirIndex + 4] != 0)
+        {
+            int leftChess = Board.Square[targetSquare - 1];
+
+            if (leftChess != 0 && NumSquaresToEdge[targetSquare][2] > 0)
+            {
+                if (Piece.Colour(piece) != Piece.Colour(leftChess))
+                    moves.Add(new Move(startSquare, targetSquare - 1));
+            }
+        }
+
+        
+    }
+
     private void GenerateSlidingMove(int startSquare, int piece)
     {
         int startDirIndex = Piece.IsType(piece, Piece.Bishop) ? 4 : 0;
-        int endDirIndex = Piece.IsType(piece, Piece.Rook) ? 4 : 7;
-        int friendlyColour = piece & (Piece.White | Piece.Black);
-        int opponentColour = (friendlyColour == Piece.White) ? Piece.Black : Piece.White;
+        int endDirIndex = Piece.IsType(piece, Piece.Rook) ? 4 : 8;
 
         for (int dir = startDirIndex; dir < endDirIndex; dir++)
         {
-    
+            
+            //if (NumSquaresToEdge[startSquare][dir] == 0) return;
             for (int n = 0; n < NumSquaresToEdge[startSquare][dir]; n++)
             {
                 int targetSquare = startSquare + DirectionOffset[dir] * (n+1);
-                Debug.Log("tar "+ targetSquare); 
+                //if (!Board.IsInBoard(targetSquare)) return;
                 int pieceOnTargetSquare = Board.Square[targetSquare]; 
                 if (Piece.IsColour(pieceOnTargetSquare, friendlyColour))
                 {
@@ -106,6 +206,19 @@ public class PieceMovement
             this.startSquare = startSquare;
             this.targetSquare = targetSquare;
         }
+    }
+    [System.Flags]
+    public enum DirCanMove : byte
+    {
+        None = 0,    // 
+        Up = 1 << 0,  // 00000001
+        Down = 1 << 1,  // 00000010
+        Left = 1 << 2,  // 00000100
+        Right = 1 << 3,  // 00001000
+        UpLeft = 1 << 4,  // 00010000
+        UpRight = 1 << 5,  // 00100000
+        DownLeft = 1 << 6,  // 01000000
+        DownRight = 1 << 7   // 10000000
     }
 
 }

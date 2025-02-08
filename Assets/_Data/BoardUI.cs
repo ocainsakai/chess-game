@@ -36,9 +36,17 @@ public class BoardUI : MonoBehaviour
     }
     public void HightLight(int square)
     {
+        if (!Board.IsInBoard(square)) return;
         SpriteRenderer renderer = this.square[square].GetComponent<SpriteRenderer>();
         renderer.color = IsDarkCell(square) ? Color.red : Color.red * 0.85f;
 
+    }
+    public void ResetColor()
+    {
+        for (int i = 0; i < square.Length; i++)
+        {
+            square[i].GetComponent<SpriteRenderer>().color = IsDarkCell(i) ? darkColor : lightColor;
+        }
     }
     public bool IsDarkCell(int square)
     {

@@ -11,6 +11,11 @@ public static class Piece
 
     public const int White = 8;
     public const int Black = 16;
+
+    public static int Colour(int piece)
+    {
+        return (piece & (White | Black));
+    }
     public static bool IsSlidingPiece(int piece)
     {
         return IsType(piece, Rook) || IsType(piece, Bishop) || IsType(piece, Queen);

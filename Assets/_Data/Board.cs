@@ -9,9 +9,13 @@ public static class Board
     {
         Square = new int[64];
     }
+    public static bool IsInBoard(int square)
+    {
+        return square< 64 && square >= 0;
+    }
     public static int GetPiece(int square)
     {
-
+        
         return Square[square];
     }
 
@@ -20,5 +24,6 @@ public static class Board
         int piece = Square[startSquare];
         Square[startSquare] = 0;
         Square[targetSquare] = piece;
+        ColourToMove ^= 24;
     }
 }
