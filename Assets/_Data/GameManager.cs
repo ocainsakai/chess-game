@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
             
             newPiece.position = BoardUI.instance.GetCell(i).position;
             newPiece.gameObject.SetActive(true);
+            
             pieces.Add(i, newPiece);
         }
         pieceMovement.GenerateMove();
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(CheckValidMove(targetSquare));
+            //Debug.Log(CheckValidMove(targetSquare));
             Board.Move(startSquare, targetSquare);
             Transform start = pieces[startSquare];
 

@@ -11,7 +11,7 @@ public class DragPiece : MonoBehaviour
     private void OnMouseDown()
     {
         startSquare = BoardUI.instance.GetSquare(this.transform.position);
-        if ( GameManager.instance.PredictionMove(startSquare).Length == 0) return;
+        if (GameManager.instance.PredictionMove(startSquare).Length == 0) return;
         dragging = true;
     }
     private void OnMouseDrag()

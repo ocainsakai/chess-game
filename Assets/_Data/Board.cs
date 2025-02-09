@@ -24,6 +24,7 @@ public static class Board
         int piece = Square[startSquare];
         Square[startSquare] = 0;
         Square[targetSquare] = piece;
-        ColourToMove ^= 24;
+        ColourToMove ^= Piece.ColorMask;
+
     }
 }

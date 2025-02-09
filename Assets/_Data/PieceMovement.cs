@@ -12,7 +12,7 @@ public class PieceMovement
     public static readonly int[] DirectionKnightOffset = {15, -15, 10, -10, -6, 6, 17, -17};
     public static readonly int[][] NumSquaresToEdge = new int[64][];
     private int friendlyColour;
-    private int opponentColour => friendlyColour ^= (Piece.White | Piece.Black);
+    private int opponentColour;
 
     public PieceMovement()
     {
@@ -44,6 +44,7 @@ public class PieceMovement
     public List<Move> GenerateMove()
     {
         friendlyColour = Board.ColourToMove;
+        opponentColour = friendlyColour ^ Piece.ColorMask;
         moves = new List<Move>();
         for (int startSquare = 0; startSquare < 64; startSquare++)
         {
@@ -53,7 +54,7 @@ public class PieceMovement
                 if (Piece.IsType(piece, Piece.King))
                 {
                     GenerateKingMove(startSquare, piece);
-                }
+                } else
                 if (Piece.IsSlidingPiece(piece))
                 {
                     GenerateSlidingMove(startSquare, piece);
@@ -71,10 +72,11 @@ public class PieceMovement
 
     private void GenerateKingMove(int startSquare, int piece)
     {
+        Debug.Log(piece);
         for (int i = 0; i < 8; i++) {
             if (NumSquaresToEdge[startSquare][i] == 0) return;
             int targetSquare = startSquare + DirectionOffset[i];
-            if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
+            //if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
             moves.Add(new Move(startSquare, targetSquare));
         }
     }
@@ -87,7 +89,7 @@ public class PieceMovement
 
             if (IsValidKnightMove(start, targetSquare))
             {
-                if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
+                //if (Piece.IsColour(Board.Square[targetSquare], friendlyColour)) continue;
                 moves.Add(new Move(start, targetSquare));
 
                 
@@ -206,19 +208,6 @@ public class PieceMovement
             this.startSquare = startSquare;
             this.targetSquare = targetSquare;
         }
-    }
-    [System.Flags]
-    public enum DirCanMove : byte
-    {
-        None = 0,    // 
-        Up = 1 << 0,  // 00000001
-        Down = 1 << 1,  // 00000010
-        Left = 1 << 2,  // 00000100
-        Right = 1 << 3,  // 00001000
-        UpLeft = 1 << 4,  // 00010000
-        UpRight = 1 << 5,  // 00100000
-        DownLeft = 1 << 6,  // 01000000
-        DownRight = 1 << 7   // 10000000
     }
 
 }

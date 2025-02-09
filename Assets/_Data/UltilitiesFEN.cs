@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 public static class UltilitiesFEN
@@ -37,6 +38,7 @@ public static class UltilitiesFEN
                     int chessColor = (char.IsUpper(symbol)) ? Piece.White : Piece.Black;
                     int chessType = PieceTypeFromSymbol[char.ToLower(symbol)];
                     chessMap[rank * 8 + file] = chessColor | chessType;
+                    
                     file++;
                 }
             }
